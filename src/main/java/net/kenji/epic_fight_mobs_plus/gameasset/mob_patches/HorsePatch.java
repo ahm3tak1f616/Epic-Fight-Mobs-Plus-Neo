@@ -118,7 +118,10 @@ public class HorsePatch<H extends AbstractHorse> extends AnimalPatchBase<Horse> 
                 new Pair<>(LivingMotions.IDLE, MobsPlusAnimations.HORSE_IDLE_ACTION_2)
         );
     }
-
+    @Override
+    public boolean blockIdleActionAnimation() {
+        return !this.getOriginal().getPassengers().isEmpty();
+    }
     @Override
     public void queIdleAction(AnimationManager.AnimationAccessor<? extends IdleActionAnimation> idleAction) {
         quedIdleAction = idleAction;

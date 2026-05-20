@@ -92,8 +92,8 @@ public abstract class AnimalPatchBase<T extends Animal> extends MobPatch<T> impl
         Vec3 forward = this.getEntityPatch().getOriginal().getForward();
         return movement.dot(forward);
     }
-
+    @Override
     public boolean blockIdleActionAnimation(){
-        return false;
+        return this.getOriginal().getControllingPassenger() != null;
     }
 }
