@@ -82,7 +82,7 @@ public class IdleActionManager {
                 });
 
                 if (motions.contains(livingEntityPatch.getCurrentLivingMotion())) {
-                    if (!state.animationPlaying) {
+                    if (!state.animationPlaying && !patchInterface.blockIdleActionAnimation()) {
                         if (patchInterface.getQuedIdleAction() == null)
                             handleIdleActionAssign(patchInterface, state);
                         else {

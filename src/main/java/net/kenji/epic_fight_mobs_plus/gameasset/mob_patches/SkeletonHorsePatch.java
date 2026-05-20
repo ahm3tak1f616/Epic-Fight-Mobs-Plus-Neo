@@ -122,6 +122,10 @@ public class SkeletonHorsePatch<H extends AbstractHorse> extends AnimalPatchBase
         );
     }
     @Override
+    public boolean blockIdleActionAnimation() {
+        return !this.getOriginal().getPassengers().isEmpty();
+    }
+    @Override
     public void queIdleAction(AnimationManager.AnimationAccessor<? extends IdleActionAnimation> idleAction) {
         quedIdleAction = idleAction;
     }

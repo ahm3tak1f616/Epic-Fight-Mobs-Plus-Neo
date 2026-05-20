@@ -23,6 +23,7 @@ public interface IAnimalMobPatch {
     boolean isIdleActionPlaying();
     int getMinIdleActionInterval();
     int getMaxIdleActionInterval();
+    boolean blockIdleActionAnimation();
     float getAnimForwardSpeed(float minSpeed, float maxSpeed);
     AnimationManager.AnimationAccessor<? extends IdleActionAnimation> getQuedIdleAction();
     LivingEntityPatch<?> getEntityPatch();

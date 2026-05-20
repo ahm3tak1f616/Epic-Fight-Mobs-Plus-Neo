@@ -11,11 +11,13 @@ import net.kenji.epic_fight_mobs_plus.mixins.accessors.LivingEntityAccessor;
 import net.kenji.epic_fight_mobs_plus.network.ClientOptionalLivingMotionPacket;
 import net.kenji.epic_fight_mobs_plus.network.ClientPetRunPacket;
 import net.kenji.epic_fight_mobs_plus.network.MobsPlusPacketHandler;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import org.jline.utils.Log;
 import yesman.epicfight.api.animation.*;
 import yesman.epicfight.api.animation.types.StaticAnimation;
 import yesman.epicfight.api.asset.AssetAccessor;
@@ -111,6 +113,7 @@ public class HorsePatch<H extends AbstractHorse> extends AnimalPatchBase<Horse> 
     public void setShouldRun(boolean value) {
 
     }
+
     @Override
     public boolean shouldInterceptAi() {
         return false;
@@ -122,6 +125,11 @@ public class HorsePatch<H extends AbstractHorse> extends AnimalPatchBase<Horse> 
                 new Pair<>(LivingMotions.IDLE, MobsPlusAnimations.HORSE_IDLE_ACTION_1),
                 new Pair<>(LivingMotions.IDLE, MobsPlusAnimations.HORSE_IDLE_ACTION_2)
         );
+    }
+
+    @Override
+    public boolean blockIdleActionAnimation() {
+        return !this.getOriginal().getPassengers().isEmpty();
     }
 
     @Override
