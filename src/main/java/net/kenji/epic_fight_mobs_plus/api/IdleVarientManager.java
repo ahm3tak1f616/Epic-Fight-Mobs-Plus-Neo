@@ -16,7 +16,6 @@ import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
 import java.util.*;
 
-@Mod.EventBusSubscriber(modid = EpicFightMobsPlus.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class IdleVarientManager {
     // Single state object per entity — cleaned up on death/unload
     private static final Map<UUID, IdleVarientState> stateMap = new HashMap<>();
@@ -26,14 +25,15 @@ public class IdleVarientManager {
         public Map<IdleActionAnimation, Integer> cooldowns = new HashMap<>(); // remaining cooldown per animation
     }
 
-    public static IdleVarientState getIdleVarientState(UUID Uuid){
+    public static IdleVarientState getIdleVarientState(UUID Uuid) {
         return stateMap.computeIfAbsent(Uuid, k -> new IdleVarientState());
 
     }
-    public static void rollRandomIdleVariant(LivingEntityPatch<?> patch){
+
+    public static void rollRandomIdleVariant(LivingEntityPatch<?> patch) {
         List<IdleVariantAnimation> list = new ArrayList<>();
-        patch.getAnimator().getLivingAnimations().forEach((motion, anim) ->{
-            if(anim.get() instanceof IdleVariantAnimation idleVariantAnimation){
+        patch.getAnimator().getLivingAnimations().forEach((motion, anim) -> {
+            if (anim.get() instanceof IdleVariantAnimation idleVariantAnimation) {
                 list.add(idleVariantAnimation);
             }
         });
@@ -41,18 +41,13 @@ public class IdleVarientManager {
         getIdleVarientState(patch.getOriginal().getUUID()).currentLivingMotion = weightedRandom(list, patch.getOriginal().getRandom());
     }
 
-    @SubscribeEvent
-    public static void onLivingTick(LivingEvent.LivingTickEvent event) {
-        if (event.getEntity().level().isClientSide()) return;
-        event.getEntity().getCapability(EpicFightCapabilities.CAPABILITY_ENTITY).ifPresent(cap -> {
-            if (cap instanceof LivingEntityPatch<?> livingEntityPatch &&
-                    livingEntityPatch instanceof IAnimalMobPatch patchInterface) {
 
-                UUID id = patchInterface.getEntityPatch().getOriginal().getUUID();
-                IdleVarientState state = getIdleVarientState(id);
-                tickCooldowns(state);
-            }
-        });
+    public static void tickIdleVariantAnimations(IAnimalMobPatch patchInterface) {
+        if (patchInterface.getEntityPatch().isLogicalClient()) return;
+
+        UUID id = patchInterface.getEntityPatch().getOriginal().getUUID();
+        IdleVarientState state = getIdleVarientState(id);
+        tickCooldowns(state);
     }
 
     private static void tickCooldowns(IdleVarientState state) {

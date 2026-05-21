@@ -1,6 +1,7 @@
 package net.kenji.epic_fight_mobs_plus.api.abstract_classes;
 
 import net.kenji.epic_fight_mobs_plus.api.IdleActionManager;
+import net.kenji.epic_fight_mobs_plus.api.IdleVarientManager;
 import net.kenji.epic_fight_mobs_plus.api.animation_types.IdleActionAnimation;
 import net.kenji.epic_fight_mobs_plus.api.interfaces.IAnimalMobPatch;
 import net.kenji.epic_fight_mobs_plus.network.ClientOptionalLivingMotionPacket;
@@ -52,6 +53,7 @@ public abstract class AnimalPatchBase<T extends Animal> extends MobPatch<T> impl
             }
         }
         IdleActionManager.tickIdleAnimations(this);
+        IdleVarientManager.tickIdleVariantAnimations(this);
     }
     @Override
     public void setShouldRun(boolean value) {

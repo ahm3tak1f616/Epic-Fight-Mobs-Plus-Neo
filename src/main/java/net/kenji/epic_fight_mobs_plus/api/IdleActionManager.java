@@ -86,8 +86,8 @@ public class IdleActionManager {
             }
 
 
-        if (isValidLivingMotion) {
-            if (!state.animationPlaying && !iMobPatch.blockIdleActionAnimation()) {
+        if (isValidLivingMotion && !iMobPatch.blockIdleActionAnimation()) {
+            if (!state.animationPlaying) {
                 if (iMobPatch.getQuedIdleAction() == null)
                     handleIdleActionAssign(iMobPatch, state);
                 else {
