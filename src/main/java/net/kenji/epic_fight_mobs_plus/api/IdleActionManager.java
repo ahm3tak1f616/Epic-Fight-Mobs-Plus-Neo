@@ -91,8 +91,8 @@ public class IdleActionManager {
         }
 
 
-        if (isValidLivingMotion) {
-            if (!state.animationPlaying && !iMobPatch.blockIdleActionAnimation()) {
+        if (isValidLivingMotion && !iMobPatch.blockIdleActionAnimation()) {
+            if (!state.animationPlaying) {
                 if (iMobPatch.getQuedIdleAction() == null)
                     handleIdleActionAssign(iMobPatch, state);
                 else {
@@ -257,7 +257,7 @@ public class IdleActionManager {
     @EventBusSubscriber(modid = EpicFightMobsPlus.MODID)
     public static class Events {
         @SubscribeEvent
-        public void onLivingDeath(EntityTickEvent.Post event) {
+        public static void onLivingDeath(EntityTickEvent.Post event) {
             stateMap.remove(event.getEntity().getUUID());
         }
     }

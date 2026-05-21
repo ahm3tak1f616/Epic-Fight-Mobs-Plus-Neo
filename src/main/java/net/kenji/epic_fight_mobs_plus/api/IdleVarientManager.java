@@ -18,7 +18,6 @@ import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@EventBusSubscriber(modid = EpicFightMobsPlus.MODID)
 public class IdleVarientManager {
     // Single state object per entity — cleaned up on death/unload
     private static final Map<UUID, IdleVarientState> stateMap = new ConcurrentHashMap<>();
@@ -43,19 +42,12 @@ public class IdleVarientManager {
         getIdleVarientState(patch.getOriginal().getUUID()).currentLivingMotion = weightedRandom(list, patch.getOriginal().getRandom());
     }
 
-    @SubscribeEvent
-    public static void onLivingTick(EntityTickEvent.Post event) {
-        if (event.getEntity().level().isClientSide()) return;
-        EntityPatch<?> entityPatch = EpicFightCapabilities.ENTITY_PATCH_PROVIDER.getCapability(event.getEntity());
-        if(entityPatch == null) return;
+    public static void tickIdleVariantAnimations(IAnimalMobPatch patchInterface) {
+        if (patchInterface.getEntityPatch().isLogicalClient()) return;
 
-        if (entityPatch instanceof LivingEntityPatch<?> livingEntityPatch &&
-                livingEntityPatch instanceof IAnimalMobPatch patchInterface) {
-
-            UUID id = patchInterface.getEntityPatch().getOriginal().getUUID();
-            IdleVarientState state = getIdleVarientState(id);
-            tickCooldowns(state);
-        }
+        UUID id = patchInterface.getEntityPatch().getOriginal().getUUID();
+        IdleVarientState state = getIdleVarientState(id);
+        tickCooldowns(state);
     }
 
     private static void tickCooldowns(IdleVarientState state) {
