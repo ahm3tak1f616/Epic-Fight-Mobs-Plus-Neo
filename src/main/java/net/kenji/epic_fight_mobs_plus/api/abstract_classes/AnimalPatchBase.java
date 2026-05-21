@@ -51,6 +51,7 @@ public abstract class AnimalPatchBase<T extends Animal> extends MobPatch<T> impl
                 IdleActionManager.clearIdleActionState(this.quedIdleAction, this, state);
             }
         }
+        IdleActionManager.tickIdleAnimations(this);
     }
     @Override
     public void setShouldRun(boolean value) {

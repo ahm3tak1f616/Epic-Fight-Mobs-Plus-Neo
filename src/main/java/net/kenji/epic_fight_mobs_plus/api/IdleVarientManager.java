@@ -61,7 +61,6 @@ public class IdleVarientManager {
     }
     private static LivingMotion weightedRandom(List<IdleVariantAnimation> candidates, RandomSource random) {
         if(candidates.isEmpty()) return LivingMotions.IDLE;
-        Log.info("Logging Weighted Random!");
         float totalWeight = (float) candidates.stream().mapToDouble(IdleVariantAnimation::getWeight).sum();
         float roll = random.nextFloat() * totalWeight;
         for (IdleVariantAnimation anim : candidates) {
