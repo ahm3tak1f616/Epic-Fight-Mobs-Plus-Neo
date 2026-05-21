@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import net.kenji.epic_fight_mobs_plus.EpicFightMobsPlus;
 import net.kenji.epic_fight_mobs_plus.api.animation_types.IdleActionAnimation;
 import net.kenji.epic_fight_mobs_plus.api.interfaces.IAnimalMobPatch;
+import net.kenji.epic_fight_mobs_plus.gameasset.MobsPlusLivingMotions;
 import net.kenji.epic_fight_mobs_plus.gameasset.mob_patches.CatPatch;
 import net.kenji.epic_fight_mobs_plus.network.ClientIdleActionSyncPacket;
 import net.kenji.epic_fight_mobs_plus.network.ClientQuedIdleActionSyncPacket;
@@ -30,7 +31,6 @@ import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@EventBusSubscriber(modid = EpicFightMobsPlus.MODID)
 public class IdleActionManager {
     // Single state object per entity — cleaned up on death/unload
     private static final Map<UUID, IdleActionState> stateMap = new ConcurrentHashMap<>();
@@ -49,74 +49,77 @@ public class IdleActionManager {
 
     }
 
-    @SubscribeEvent
-    public static void onLivingTick(EntityTickEvent.Post event) {
-        EntityPatch<?> entityPatch = EpicFightCapabilities.ENTITY_PATCH_PROVIDER.getCapability(event.getEntity());
-        if(entityPatch == null) return;
 
-        if (entityPatch instanceof LivingEntityPatch<?> livingEntityPatch &&
-                livingEntityPatch instanceof IAnimalMobPatch patchInterface) {
+    public static void tickIdleAnimations(IAnimalMobPatch iMobPatch) {
+        LivingEntityPatch<?> livingEntityPatch = iMobPatch.getEntityPatch();
 
-            UUID id = patchInterface.getEntityPatch().getOriginal().getUUID();
-            IdleActionState state = getIdleActionState(id);
+        UUID id = iMobPatch.getEntityPatch().getOriginal().getUUID();
+        IdleActionState state = getIdleActionState(id);
 
-            Animator animator = patchInterface.getEntityPatch().getAnimator();
-            if (animator instanceof ClientAnimator clientAnimator) {
-                AnimationPlayer animPlayer = clientAnimator.getPlayerFor(null);
-                if (animPlayer != null) {
-                    MobsPlusPacketHandler.sendToServer(new ServerIdleActionPacket(livingEntityPatch.getOriginal().getUUID(), null, animPlayer.getElapsedTime(), animPlayer.getAnimation().get().getTotalTime()));
-                }
-
+        Animator animator = iMobPatch.getEntityPatch().getAnimator();
+        if (animator instanceof ClientAnimator clientAnimator) {
+            AnimationPlayer animPlayer = clientAnimator.getPlayerFor(null);
+            if (animPlayer != null) {
+                MobsPlusPacketHandler.sendToServer(new ServerIdleActionPacket(livingEntityPatch.getOriginal().getUUID(), null, animPlayer.getElapsedTime(), animPlayer.getAnimation().get().getTotalTime()));
             }
 
-            if (event.getEntity().level().isClientSide()) return;
+        }
+
+        if (livingEntityPatch.isLogicalClient()) return;
 
 
-            // Only tick cooldowns when no animation is playing
-            if (!state.animationPlaying) {
-                tickCooldowns(state);
+        // Only tick cooldowns when no animation is playing
+        if (!state.animationPlaying) {
+            tickCooldowns(state);
+        }
+        List<LivingMotion> motions = new ArrayList<>();
+        LivingMotion currentMotion = livingEntityPatch.getCurrentLivingMotion();
+        boolean isValidLivingMotion = false;
+        iMobPatch.getIdleActionAnimations().forEach(pair -> {
+            if (!motions.contains(pair.getFirst())) {
+                motions.add(pair.getFirst());
             }
-            List<LivingMotion> motions = new ArrayList<>();
+        });
 
-            patchInterface.getIdleActionAnimations().forEach(pair -> {
-                if (!motions.contains(pair.getFirst())) {
-                    motions.add(pair.getFirst());
-                }
-            });
+        if(currentMotion instanceof MobsPlusLivingMotions mobsPlusLivingMotions){
+            if(mobsPlusLivingMotions.parentMotion != null && motions.contains(mobsPlusLivingMotions.parentMotion)){
+                isValidLivingMotion = true;
+            }
+        }
+        else if(motions.contains(currentMotion)){
+            isValidLivingMotion = true;
+        }
 
-            if (motions.contains(livingEntityPatch.getCurrentLivingMotion())) {
-                if (!state.animationPlaying && !patchInterface.blockIdleActionAnimation()) {
-                    if (patchInterface.getQuedIdleAction() == null)
-                        handleIdleActionAssign(patchInterface, state);
-                    else {
-                        if (animator instanceof ServerAnimator serverAnimator) {
-                            AnimationPlayer animPlayer = serverAnimator.animationPlayer;
-                            if (animPlayer != null) {
-                                if (state.currentElapsedTime >= state.currentQuedTotalTime - 0.1F || patchInterface.getQuedIdleAction().get().isShouldPlayInstantly()) {
-                                    playQuedIdleAction(patchInterface, patchInterface.getQuedIdleAction().get());
-                                }
+
+        if (isValidLivingMotion) {
+            if (!state.animationPlaying && !iMobPatch.blockIdleActionAnimation()) {
+                if (iMobPatch.getQuedIdleAction() == null)
+                    handleIdleActionAssign(iMobPatch, state);
+                else {
+                    if (animator instanceof ServerAnimator serverAnimator) {
+                        AnimationPlayer animPlayer = serverAnimator.animationPlayer;
+                        if (animPlayer != null) {
+                            if (state.currentElapsedTime >= state.currentQuedTotalTime - 0.1F || iMobPatch.getQuedIdleAction().get().isShouldPlayInstantly()) {
+                                playQuedIdleAction(iMobPatch, iMobPatch.getQuedIdleAction().get());
                             }
                         }
                     }
-                } else {
-                    handleAnimationPlay(patchInterface, state);
                 }
             } else {
-                if (state.animationPlaying) {
-                    AssetAccessor<? extends IdleActionAnimation> queued = patchInterface.getQuedIdleAction();
-                    clearIdleActionState(queued, patchInterface, state);
-                    // Send null to tell clients to clear
-                    MobsPlusPacketHandler.sendToAll(new ClientIdleActionSyncPacket(
-                            livingEntityPatch.getOriginal().getId(), null));
-                }
+                handleAnimationPlay(iMobPatch, state);
+            }
+        } else {
+            if (state.animationPlaying) {
+                AssetAccessor<? extends IdleActionAnimation> queued = iMobPatch.getQuedIdleAction();
+                clearIdleActionState(queued, iMobPatch, state);
+                // Send null to tell clients to clear
+                MobsPlusPacketHandler.sendToAll(new ClientIdleActionSyncPacket(
+                        livingEntityPatch.getOriginal().getId(), null));
             }
         }
     }
 
-    @SubscribeEvent
-    public static void onLivingDeath(EntityTickEvent.Post event) {
-        stateMap.remove(event.getEntity().getUUID());
-    }
+
 
     // You'll also want to hook LivingEntityUntrackEvent or similar for unloads
 
@@ -207,7 +210,12 @@ public class IdleActionManager {
     public static void clearIdleActionState(AssetAccessor<? extends IdleActionAnimation> idleAnim, IAnimalMobPatch patchInterface, IdleActionState state) {
         LivingEntity entity = patchInterface.getEntityPatch().getOriginal();
 
-        if (!state.animationPlaying) return;
+        if (!state.animationPlaying) {
+            if(entity instanceof Mob mob){
+                mob.setNoAi(false);
+            }
+            return;
+        }
 
 
         if (entity instanceof Mob mob) {
@@ -245,5 +253,12 @@ public class IdleActionManager {
             if (roll <= 0) return anim;
         }
         return candidates.get(candidates.size() - 1); // fallback
+    }
+    @EventBusSubscriber(modid = EpicFightMobsPlus.MODID)
+    public static class Events {
+        @SubscribeEvent
+        public void onLivingDeath(EntityTickEvent.Post event) {
+            stateMap.remove(event.getEntity().getUUID());
+        }
     }
 }

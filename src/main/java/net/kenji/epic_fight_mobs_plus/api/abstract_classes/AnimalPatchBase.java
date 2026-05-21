@@ -68,6 +68,13 @@ public abstract class AnimalPatchBase<T extends Animal> extends MobPatch<T> impl
             }
         }
     }
+
+    @Override
+    public void postTick() {
+        super.postTick();
+        IdleActionManager.tickIdleAnimations(this);
+    }
+
     @Override
     public void setShouldRun(boolean value) {
         shouldRun = value;
