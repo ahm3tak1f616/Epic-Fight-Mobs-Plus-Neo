@@ -2,6 +2,8 @@ package net.kenji.epic_fight_mobs_plus.api.interfaces;
 
 import com.mojang.datafixers.util.Pair;
 import net.kenji.epic_fight_mobs_plus.api.animation_types.IdleActionAnimation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import yesman.epicfight.api.animation.AnimationManager;
 import yesman.epicfight.api.animation.LivingMotion;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
@@ -27,4 +29,5 @@ public interface IAnimalMobPatch {
     float getAnimForwardSpeed(float minSpeed, float maxSpeed);
     AnimationManager.AnimationAccessor<? extends IdleActionAnimation> getQuedIdleAction();
     LivingEntityPatch<?> getEntityPatch();
+    boolean canInteract(Player interactor, ItemStack heldItem);
 }

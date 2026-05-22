@@ -74,8 +74,7 @@ public class ServerIdleActionPacket {
                         if (patch != null) {
                             AnimationManager.AnimationAccessor<?> accessor = AnimationManager.byKey(packet.motionId);
                             if(accessor != null && accessor.get() instanceof IdleActionAnimation idleActionAnimation){
-
-                                IdleActionManager.playQuedIdleAction(patchInterface, idleActionAnimation);
+                               // IdleActionManager.playQuedIdleAction(patchInterface, idleActionAnimation);
                             }
                         }
 

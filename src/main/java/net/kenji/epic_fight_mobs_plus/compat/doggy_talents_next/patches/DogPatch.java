@@ -3,6 +3,7 @@ package net.kenji.epic_fight_mobs_plus.compat.doggy_talents_next.patches;
 import com.mojang.datafixers.util.Pair;
 import doggytalents.common.entity.Dog;
 import doggytalents.common.entity.ai.DogFollowOwnerGoal;
+import doggytalents.common.item.TreatItem;
 import net.kenji.epic_fight_mobs_plus.api.IdleActionManager;
 import net.kenji.epic_fight_mobs_plus.api.abstract_classes.AnimalPatchBase;
 import net.kenji.epic_fight_mobs_plus.api.animation_types.IdleActionAnimation;
@@ -12,6 +13,9 @@ import net.kenji.epic_fight_mobs_plus.mixins.accessors.DogAccessor;
 import net.kenji.epic_fight_mobs_plus.mixins.accessors.DogAiManagerAccessor;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import yesman.epicfight.api.animation.*;
 import yesman.epicfight.api.animation.types.StaticAnimation;
@@ -214,5 +218,14 @@ public class DogPatch<D extends Dog> extends AnimalPatchBase<Dog> {
     @Override
     public LivingEntityPatch<?> getEntityPatch() {
         return this;
+    }
+
+    @Override
+    public boolean canInteract(Player interactor, ItemStack heldItem) {
+        if(this.getOriginal().isTame() && heldItem.getItem() instanceof TreatItem)
+            return true;
+        if((!this.getOriginal().isTame() && heldItem.getItem() == Items.BONE) || super.isFoodAcceptable(interactor, heldItem))
+            return true;
+        return this.getOriginal().isTame() && this.getOriginal().getOwner() == interactor;
     }
 }

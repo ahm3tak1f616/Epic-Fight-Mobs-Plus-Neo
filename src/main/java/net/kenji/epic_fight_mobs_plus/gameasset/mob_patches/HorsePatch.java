@@ -3,27 +3,19 @@ package net.kenji.epic_fight_mobs_plus.gameasset.mob_patches;
 import com.mojang.datafixers.util.Pair;
 import net.kenji.epic_fight_mobs_plus.api.abstract_classes.AnimalPatchBase;
 import net.kenji.epic_fight_mobs_plus.api.animation_types.IdleActionAnimation;
-import net.kenji.epic_fight_mobs_plus.api.interfaces.IAnimalMobPatch;
 import net.kenji.epic_fight_mobs_plus.api.interfaces.IHorsePatch;
 import net.kenji.epic_fight_mobs_plus.gameasset.MobsPlusLivingMotions;
 import net.kenji.epic_fight_mobs_plus.gameasset.animations.MobsPlusAnimations;
 import net.kenji.epic_fight_mobs_plus.mixins.accessors.LivingEntityAccessor;
-import net.kenji.epic_fight_mobs_plus.network.ClientOptionalLivingMotionPacket;
-import net.kenji.epic_fight_mobs_plus.network.ClientPetRunPacket;
-import net.kenji.epic_fight_mobs_plus.network.MobsPlusPacketHandler;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.animal.horse.Horse;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import org.jline.utils.Log;
 import yesman.epicfight.api.animation.*;
 import yesman.epicfight.api.animation.types.StaticAnimation;
 import yesman.epicfight.api.asset.AssetAccessor;
-import yesman.epicfight.world.capabilities.entitypatch.Factions;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
-import yesman.epicfight.world.capabilities.entitypatch.MobPatch;
 import yesman.epicfight.world.damagesource.StunType;
 
 import java.util.List;
@@ -158,5 +150,12 @@ public class HorsePatch<H extends AbstractHorse> extends AnimalPatchBase<Horse> 
     @Override
     public LivingEntityPatch<?> getEntityPatch() {
         return this;
+    }
+
+    @Override
+    public boolean canInteract(Player interactor, ItemStack heldItem) {
+        if(super.isFoodAcceptable(interactor, heldItem))
+            return true;
+        return !this.getOriginal().isTamed() || this.getOriginal().getOwner() == interactor;
     }
 }

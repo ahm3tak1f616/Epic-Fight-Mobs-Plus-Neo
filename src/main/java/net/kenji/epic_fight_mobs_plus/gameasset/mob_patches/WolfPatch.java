@@ -15,7 +15,11 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Turtle;
 import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import org.jline.utils.Log;
 import yesman.epicfight.api.animation.*;
 import yesman.epicfight.api.animation.types.StaticAnimation;
 import yesman.epicfight.api.asset.AssetAccessor;
@@ -32,8 +36,6 @@ public class WolfPatch<W extends TamableAnimal> extends AnimalPatchBase<Wolf> {
     public boolean isFollowingOwner = false;
     public static int MAX_COUNTER = 20;
     public int isFollowingOwnerCounter = 20;
-
-    @Override
     public void tick(LivingEvent.LivingTickEvent event) {
         super.tick(event);
     }
@@ -63,6 +65,8 @@ public class WolfPatch<W extends TamableAnimal> extends AnimalPatchBase<Wolf> {
         return isFollowingOwner ||  this.getOriginal().getPersistentData().getBoolean("is_following") || this.getOriginal().getTarget() != null;
     }
 
+
+
     @Override
     public void updateMotion(boolean b) {
         if (((WolfAccessor)this.getOriginal()).getIsShaking()) {
@@ -72,12 +76,16 @@ public class WolfPatch<W extends TamableAnimal> extends AnimalPatchBase<Wolf> {
                 IdleActionManager.clearIdleActionState(this.quedIdleAction, this, state);
             }
         }
+
         if (this.getOriginal().isInSittingPose()) {
+
             this.currentLivingMotion = LivingMotions.SIT;
             this.currentCompositeMotion = LivingMotions.SIT;
             currentOptionalLivingMotion = currentLivingMotion;
+
             return;
         }
+
         if (((WolfAccessor)this.getOriginal()).getIsShaking()) {
             this.currentLivingMotion = MobsPlusLivingMotions.WOLF_SHAKE_OFF;
             this.currentCompositeMotion = MobsPlusLivingMotions.WOLF_SHAKE_OFF;
@@ -206,5 +214,13 @@ public class WolfPatch<W extends TamableAnimal> extends AnimalPatchBase<Wolf> {
     @Override
     public LivingEntityPatch<?> getEntityPatch() {
         return this;
+    }
+
+
+    @Override
+    public boolean canInteract(Player interactor, ItemStack heldItem) {
+        if((!this.getOriginal().isTame() && heldItem.getItem() == Items.BONE) || super.isFoodAcceptable(interactor, heldItem))
+            return true;
+        return this.getOriginal().isTame() && this.getOriginal().getOwner() == interactor;
     }
 }

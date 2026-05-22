@@ -82,12 +82,10 @@ public class IdleActionAnimation extends StaticAnimation {
 
         if (entitypatch instanceof IAnimalMobPatch patchInterface) {
             if (patchInterface.getQuedIdleAction() != null && this == patchInterface.getQuedIdleAction().get()) {
-                IdleActionManager.clearIdleActionState(
-                        this.getAccessor(),
+                IdleActionManager.stopAnimationState(
                         patchInterface,
                         IdleActionManager.getIdleActionState(entitypatch.getOriginal().getUUID())
                 );        if (entitypatch.getOriginal().level().isClientSide()) return; // server handles state
-
             }
         }
     }

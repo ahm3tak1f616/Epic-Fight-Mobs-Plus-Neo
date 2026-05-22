@@ -15,6 +15,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.animal.horse.SkeletonHorse;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import yesman.epicfight.api.animation.*;
@@ -151,5 +153,12 @@ public class SkeletonHorsePatch<H extends AbstractHorse> extends AnimalPatchBase
     @Override
     public LivingEntityPatch<?> getEntityPatch() {
         return this;
+    }
+
+    @Override
+    public boolean canInteract(Player interactor, ItemStack heldItem) {
+        if(super.isFoodAcceptable(interactor, heldItem))
+            return true;
+        return !this.getOriginal().isTamed() || this.getOriginal().getOwner() == interactor;
     }
 }
