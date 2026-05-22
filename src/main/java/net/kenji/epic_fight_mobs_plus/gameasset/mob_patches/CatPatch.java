@@ -21,6 +21,8 @@ import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.animal.Turtle;
 
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.jline.utils.Log;
 import yesman.epicfight.api.animation.*;
 import yesman.epicfight.api.animation.types.StaticAnimation;
@@ -196,5 +198,12 @@ public class CatPatch<H extends Cat> extends AnimalPatchBase<Cat> {
     @Override
     public LivingEntityPatch<?> getEntityPatch() {
         return this;
+    }
+
+    @Override
+    public boolean canInteract(Player interactor, ItemStack heldItem) {
+        if(super.isFoodAcceptable(interactor, heldItem))
+            return true;
+        return this.getOriginal().isTame() && this.getOriginal().getOwner() == interactor;
     }
 }

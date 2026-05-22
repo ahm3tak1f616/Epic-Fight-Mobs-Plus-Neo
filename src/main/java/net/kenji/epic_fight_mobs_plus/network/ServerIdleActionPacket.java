@@ -78,7 +78,7 @@ public record ServerIdleActionPacket(
                     if (patchInterface.getEntityPatch() != null) {
                         AnimationManager.AnimationAccessor<?> accessor = AnimationManager.byKey(packet.motionId);
                         if (accessor != null && accessor.get() instanceof IdleActionAnimation idleActionAnimation) {
-                            IdleActionManager.playQuedIdleAction(patchInterface, idleActionAnimation);
+                            //IdleActionManager.playQuedIdleAction(patchInterface, idleActionAnimation);
                         }
                     }
                 }

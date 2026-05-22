@@ -9,6 +9,8 @@ import net.kenji.epic_fight_mobs_plus.gameasset.animations.MobsPlusAnimations;
 import net.kenji.epic_fight_mobs_plus.mixins.accessors.LivingEntityAccessor;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.animal.horse.SkeletonHorse;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import yesman.epicfight.api.animation.*;
 import yesman.epicfight.api.animation.types.StaticAnimation;
 import yesman.epicfight.api.asset.AssetAccessor;
@@ -145,5 +147,12 @@ public class SkeletonHorsePatch<H extends AbstractHorse> extends AnimalPatchBase
     @Override
     public LivingEntityPatch<?> getEntityPatch() {
         return this;
+    }
+
+    @Override
+    public boolean canInteract(Player interactor, ItemStack heldItem) {
+        if(super.isFoodAcceptable(interactor, heldItem))
+            return true;
+        return !this.getOriginal().isTamed() || this.getOriginal().getOwner() == interactor;
     }
 }

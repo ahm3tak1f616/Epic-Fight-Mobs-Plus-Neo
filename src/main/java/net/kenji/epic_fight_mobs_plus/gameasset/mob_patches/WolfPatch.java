@@ -15,6 +15,9 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Turtle;
 import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import yesman.epicfight.api.animation.*;
 import yesman.epicfight.api.animation.types.StaticAnimation;
 import yesman.epicfight.api.asset.AssetAccessor;
@@ -205,5 +208,12 @@ public class WolfPatch<W extends TamableAnimal> extends AnimalPatchBase<Wolf> {
     @Override
     public LivingEntityPatch<?> getEntityPatch() {
         return this;
+    }
+
+    @Override
+    public boolean canInteract(Player interactor, ItemStack heldItem) {
+        if((!this.getOriginal().isTame() && heldItem.getItem() == Items.BONE) || super.isFoodAcceptable(interactor, heldItem))
+            return true;
+        return this.getOriginal().isTame() && this.getOriginal().getOwner() == interactor;
     }
 }

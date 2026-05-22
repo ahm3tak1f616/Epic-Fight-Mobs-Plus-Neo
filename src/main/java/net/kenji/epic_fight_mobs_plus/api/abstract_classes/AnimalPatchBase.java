@@ -10,6 +10,9 @@ import net.kenji.epic_fight_mobs_plus.network.MobsPlusPacketHandler;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.LeadItem;
 import net.minecraft.world.phys.Vec3;
 import yesman.epicfight.api.animation.AnimationManager;
 import yesman.epicfight.api.animation.LivingMotion;
@@ -101,8 +104,18 @@ public abstract class AnimalPatchBase<T extends Animal> extends MobPatch<T> impl
         Vec3 forward = this.getEntityPatch().getOriginal().getForward();
         return movement.dot(forward);
     }
+
     @Override
     public boolean blockIdleActionAnimation(){
         return this.getOriginal().getControllingPassenger() != null;
+    }
+
+    @Override
+    public boolean canInteract(Player interactor, ItemStack heldItem) {
+        return isFoodAcceptable(interactor, heldItem) || heldItem.getItem() instanceof LeadItem;
+    }
+    protected boolean isFoodAcceptable(Player player, ItemStack itemStack){
+        ItemStack heldItem = player.getInventory().getSelected();
+        return this.getOriginal().isFood(heldItem);
     }
 }
