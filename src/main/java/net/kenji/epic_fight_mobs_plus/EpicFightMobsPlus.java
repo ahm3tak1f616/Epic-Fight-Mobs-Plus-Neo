@@ -15,9 +15,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -49,14 +51,14 @@ public class EpicFightMobsPlus {
 
     // Creates a creative tab with the id "epic_fight_mobs_plus:example_tab" for the example item, that is placed after the combat tab
 
-    public EpicFightMobsPlus() {
+    public EpicFightMobsPlus(ModContainer container) {
         IEventBus modEventBus = ModLoadingContext.get().getActiveContainer().getEventBus();
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(MobsPlusAnimations::registerAnimations);
         CompatEvents.OnInit(modEventBus);
-
+        container.registerConfig(ModConfig.Type.COMMON, MobsPlusConfigCommon.SPEC, "EpicFight-MobsPlus-Common.toml");
         if (FMLEnvironment.dist == Dist.CLIENT) {
             //modEventBus.addListener(EpicFightClientEvents::registerPatchedEntityRenderers);
         }

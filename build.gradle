@@ -96,7 +96,7 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     implementation "curse.maven:embeddium-908741:6118392"
-    implementation "curse.maven:epic-fight-mod-405076:7956628"
+    implementation "curse.maven:epic-fight-mod-405076:8080214"
     implementation "curse.maven:doggy-talents-next-694492:7666746"
     implementation "curse.maven:packet-fixer-689467:7221528"
 

@@ -34,7 +34,7 @@ public class MobsPlusAnimations {
     public static void registerAnimations(AnimationManager.AnimationRegistryEvent event) {
         event.newBuilder(EpicFightMobsPlus.MODID, MobsPlusAnimations::build);    }
 
-
+    public static AnimationManager.AnimationAccessor<StaticAnimation> BIPED_MOUNT_IDLE;
     public static AnimationManager.AnimationAccessor<StaticAnimation> BIPED_MOUNT_RIDE_FORWARD;
     public static AnimationManager.AnimationAccessor<StaticAnimation> BIPED_MOUNT_RIDE_BACKWARD;
 
@@ -110,6 +110,8 @@ public class MobsPlusAnimations {
     public static AnimationManager.AnimationAccessor<AttackAnimation> POLAR_BEAR_ATTACK;
 
     private static void build(AnimationManager.AnimationBuilder builder){
+        BIPED_MOUNT_IDLE = builder.nextAccessor("biped/living/mount_idle", (accessor -> new StaticAnimation(0.2F,true, accessor, Armatures.BIPED)));
+
         BIPED_MOUNT_RIDE_FORWARD = builder.nextAccessor("biped/living/mount_ride_forward", (accessor -> new StaticAnimation(0.2F,true, accessor, Armatures.BIPED)));
         BIPED_MOUNT_RIDE_BACKWARD = builder.nextAccessor("biped/living/mount_ride_backward", (accessor -> new StaticAnimation(0.2F,true, accessor, Armatures.BIPED)));
 
