@@ -73,6 +73,9 @@ public class EpicFightMobsPlus {
         modEventBus.addListener(MobsPlusAnimations::registerAnimations);
         CompatEvents.OnInit(modEventBus);
 
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, MobsPlusConfigCommon.SPEC, "EpicFight-MobsPlus-Common.toml");
+
+
         if (FMLEnvironment.dist == Dist.CLIENT) {
             modEventBus.addListener(EpicFightClientEvents::registerPatchedEntityRenderers);        }
         // Register ourselves for server and other game events we are interested in

@@ -1,5 +1,6 @@
 package net.kenji.epic_fight_mobs_plus.mixins;
 
+import net.kenji.epic_fight_mobs_plus.MobsPlusConfigCommon;
 import net.kenji.epic_fight_mobs_plus.gameasset.MobsPlusLivingMotions;
 import net.kenji.epic_fight_mobs_plus.gameasset.animations.MobsPlusAnimations;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,9 +18,12 @@ public class PlayerPatchMixin {
     @Inject(method = "initAnimator", at = @At("TAIL"))
     public void onInitAnimator(Animator animator, CallbackInfo ci){
         PlayerPatch<?> self = (PlayerPatch<?>)(Object) this;
+        if(MobsPlusConfigCommon.REPLACE_EPIC_FIGHT_MOUNT_IDLE.get())
+            animator.addLivingAnimation(LivingMotions.MOUNT, MobsPlusAnimations.BIPED_MOUNT_IDLE);
 
-        animator.addLivingAnimation(MobsPlusLivingMotions.MOUNT_FORWARD, MobsPlusAnimations.BIPED_MOUNT_RIDE_FORWARD);
-        animator.addLivingAnimation(MobsPlusLivingMotions.MOUNT_BACKWARD, MobsPlusAnimations.BIPED_MOUNT_RIDE_BACKWARD);
+        if(MobsPlusConfigCommon.USE_MOUNT_RIDE_ANIMATIONS.get()) {
+            animator.addLivingAnimation(MobsPlusLivingMotions.MOUNT_FORWARD, MobsPlusAnimations.BIPED_MOUNT_RIDE_FORWARD);
+            animator.addLivingAnimation(MobsPlusLivingMotions.MOUNT_BACKWARD, MobsPlusAnimations.BIPED_MOUNT_RIDE_BACKWARD);
+        }
     }
-
 }
