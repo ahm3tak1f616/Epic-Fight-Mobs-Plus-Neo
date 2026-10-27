@@ -64,7 +64,7 @@ public record ClientPlayAnimationPacket(int entityId, ResourceLocation motionId)
         Entity entity = player.level().getEntity(packet.entityId);
         if (entity == null) return;
 
-        EntityPatch<?> entityPatch = EpicFightCapabilities.ENTITY_PATCH_PROVIDER.getCapability(entity);
+        EntityPatch<?> entityPatch = EpicFightCapabilities.getEntityPatch(entity, EntityPatch.class);
         if (entityPatch == null) return;
         if (entityPatch instanceof IAnimalMobPatch patchInterface) {
             LivingEntityPatch<?> patch = patchInterface.getEntityPatch();

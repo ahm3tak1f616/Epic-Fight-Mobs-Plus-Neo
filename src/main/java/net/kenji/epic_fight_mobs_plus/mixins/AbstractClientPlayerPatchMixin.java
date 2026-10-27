@@ -1,5 +1,6 @@
 package net.kenji.epic_fight_mobs_plus.mixins;
 
+import net.kenji.epic_fight_mobs_plus.MobsPlusConfigCommon;
 import net.kenji.epic_fight_mobs_plus.gameasset.MobsPlusLivingMotions;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.InteractionHand;
@@ -34,6 +35,7 @@ public abstract class AbstractClientPlayerPatchMixin {
 
     @Inject(method = "updateMotion", at = @At("HEAD"), cancellable = true)
     public void onUpdateMotion(boolean considerInaction, CallbackInfo ci){
+        if (!MobsPlusConfigCommon.USE_MOUNT_RIDE_ANIMATIONS.get()) return;
         AbstractClientPlayerPatch<?> self = (AbstractClientPlayerPatch<?>)(Object) this;
         if (((AbstractClientPlayer)self.getOriginal()).getVehicle() instanceof PlayerRideableJumping) {
             ci.cancel();

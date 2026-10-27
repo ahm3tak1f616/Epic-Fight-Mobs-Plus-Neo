@@ -2,8 +2,8 @@
   "required": true,
   "minVersion": "0.8",
   "package": "net.kenji.epic_fight_mobs_plus.mixins",
-  "compatibilityLevel": "JAVA_8",
-  "refmap": "epic_fight_mobs_plus.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "plugin": "net.kenji.epic_fight_mobs_plus.CompatMixinPlugin",
   "mixins": [
     "accessors.AbstractHorseAccessor",
     "accessors.CatAccessor",
@@ -18,7 +18,6 @@
     "animal_mixins.WolfMixin",
     "animal_mixins.DogAiManagerMixin",
     "animal_mixins.FoxMixin",
-    "AbstractClientPlayerPatchMixin",
     "AbstractHorseMixin",
     "LivingEntityMixin",
     "MobMixin",
@@ -26,6 +25,7 @@
     "PlayerPatchMixin"
   ],
   "client": [
+    "AbstractClientPlayerPatchMixin"
   ],
   "injectors": {
     "defaultRequire": 1

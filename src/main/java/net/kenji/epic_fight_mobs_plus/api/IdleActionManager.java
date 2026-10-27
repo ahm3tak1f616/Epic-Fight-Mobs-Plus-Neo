@@ -22,7 +22,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
-import org.jline.utils.Log;
 import yesman.epicfight.api.animation.*;
 import yesman.epicfight.api.animation.types.DynamicAnimation;
 import yesman.epicfight.api.animation.types.StaticAnimation;
@@ -146,8 +145,6 @@ public class IdleActionManager {
             }
         });
 
-        Log.info("Logging Anim Chose1!");
-
         if (finalAnims.isEmpty()) return;
 
         // Filter to only IdleActionAnimation instances (ignore plain StaticAnimations)
@@ -159,8 +156,6 @@ public class IdleActionManager {
                 .toList();
 
         if (idleAnims.isEmpty()) return;
-
-        Log.info("Logging Anim Chose2!");
         if (state.ticksUntilNextAction < 0) {
             // Pick wait time from the highest-priority eligible animation
             IdleActionAnimation representative = highestPriority(idleAnims);
@@ -169,7 +164,6 @@ public class IdleActionManager {
                     representative.getMinWaitTicks(), representative.getMaxWaitTicks());
             return;
         }
-        Log.info("Logging Anim Chose3!");
         if (state.ticksUntilNextAction > 0) {
             state.ticksUntilNextAction--;
             return;
@@ -190,12 +184,11 @@ public class IdleActionManager {
     public static void playQuedIdleAction(IAnimalMobPatch patchInterface, IdleActionAnimation chosen){
         UUID id = patchInterface.getEntityPatch().getOriginal().getUUID();
         IdleActionState state = getIdleActionState(id);
-
-        Log.info("Playing Animation!");
         patchInterface.getEntityPatch().playAnimationSynchronized(chosen.getAccessor(), 0.1F);
 
 
         state.animationPlaying = true;
+        state.cooldowns.put(chosen, chosen.getCooldownTicks());
         state.ticksUntilNextAction = -1;
         state.initialRotation = patchInterface.getEntityPatch().getOriginal().getYRot();
     }
@@ -231,7 +224,8 @@ public class IdleActionManager {
         }
 
         if (idleAnim != null) {
-            state.cooldowns.forEach((k, cooldown) -> state.cooldowns.put(k, k.getCooldownTicks()));
+            IdleActionAnimation animation = idleAnim.get();
+            state.cooldowns.put(animation, animation.getCooldownTicks());
         }
         stopIdleAnimation(patchInterface);
 

@@ -191,7 +191,7 @@ public class MobsPlusAnimations {
 
         CAT_IDLE = builder.nextAccessor("cat/living/cat_idle", (accessor -> new StaticAnimation(0.2F, true, accessor, MobsPlusArmatures.CAT)));
         CAT_IDLE_VAR1 = builder.nextAccessor("cat/living/cat_idle_var1", (accessor -> new IdleVariantAnimation(5, 3, MobsPlusLivingMotions.IDLE_VAR2, 0.2F, true, accessor, MobsPlusArmatures.CAT)));
-        CAT_IDLE_VAR2 = builder.nextAccessor("cat/living/car_idle_var2", (accessor -> new IdleVariantAnimation(2, 4,MobsPlusLivingMotions.IDLE_VAR3, 0.2F, true, accessor, MobsPlusArmatures.CAT)));
+        CAT_IDLE_VAR2 = builder.nextAccessor("cat/living/cat_idle_var2", (accessor -> new IdleVariantAnimation(2, 4,MobsPlusLivingMotions.IDLE_VAR3, 0.2F, true, accessor, MobsPlusArmatures.CAT)));
         CAT_IDLE_VAR3 = builder.nextAccessor("cat/living/cat_idle_var3", (accessor -> new IdleVariantAnimation(3, 2.5,MobsPlusLivingMotions.IDLE_VAR4, 0.2F, true, accessor, MobsPlusArmatures.CAT)));
 
         CAT_WALK = builder.nextAccessor("cat/living/cat_walk", (accessor -> new StaticAnimation(0.2F,true, accessor, MobsPlusArmatures.CAT)));

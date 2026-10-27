@@ -72,7 +72,7 @@ public record ServerIdleActionPacket(
                 if (packet.motionId == null) return;
 
                 // NeoForge 1.21.1 + Epic Fight: use getData attachment, not getCapability
-                EntityPatch<?> entityPatch = EpicFightCapabilities.ENTITY_PATCH_PROVIDER.getCapability(entity);
+                EntityPatch<?> entityPatch = EpicFightCapabilities.getEntityPatch(entity, EntityPatch.class);
                 if (entityPatch == null) return;
                 if(entityPatch instanceof IAnimalMobPatch patchInterface) {
                     if (patchInterface.getEntityPatch() != null) {

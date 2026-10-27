@@ -12,7 +12,6 @@ import net.minecraft.world.entity.ai.goal.JumpGoal;
 import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import org.jline.utils.Log;
 
 import java.util.Objects;
 
@@ -106,8 +105,6 @@ public class AnimatedFoxPounceGoal extends JumpGoal {
             if(fox.onGround()){
                 foxPatch.playAnimationSynchronized(MobsPlusAnimations.FOX_POUNCE_READY, 0.05F);
                 MobsPlusPacketHandler.sendToAll(new ClientPlayAnimationPacket(fox.getId(), MobsPlusAnimations.FOX_POUNCE_READY.get().getLocation()));
-
-                Log.info("Logging Anim Play!");
             }
         }
 

@@ -57,3 +57,10 @@ type = "required"
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "epicfight"
+type = "required"
+versionRange = "[${epic_fight_version},)"
+ordering = "AFTER"
+side = "BOTH"
